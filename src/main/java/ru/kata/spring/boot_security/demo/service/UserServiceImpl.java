@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.configs.WebSecurityConfig;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
@@ -20,6 +22,12 @@ public class UserServiceImpl implements UserService {
     private EntityManager em;
 
     private UserRepository userRepository;
+
+//    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -56,6 +64,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User saveUser(User user) {
+        user.setPassword(WebSecurityConfig.passwordEncoder().encode(user.getPassword()));
         return userRepository.save(user);
     }
 

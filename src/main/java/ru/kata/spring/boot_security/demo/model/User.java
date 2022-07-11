@@ -134,4 +134,35 @@ public class User implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = (result + (((int) surname.length()) << 5)) * 31;
+        result = (result + (((int) age) << 5)) * 31;
+        result = (result + (((int) username.length()) << 5)) * 31;
+        result = (result + (((int) username.length()) << 5)) * 31;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj == null || obj.getClass() != obj.getClass()) {
+            return false;
+        }
+        User user = (User) obj;
+        return ((username.compareTo(user.getUsername()) == 0) &&
+                ((surname.compareTo(user.getSurname())) == 0) &&
+                ((email.compareTo(user.getEmail()) == 0)) &&
+                ((Long.compare(id, user.getId())) == 0) &&
+                (Integer.compare(age, user.getAge())) == 0);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
