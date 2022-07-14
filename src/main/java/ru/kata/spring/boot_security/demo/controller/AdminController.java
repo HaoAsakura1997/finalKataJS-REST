@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,9 +10,6 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-
-
-import java.util.Map;
 
 
 
@@ -34,11 +32,12 @@ public class AdminController {
     }
 
 
-    //Сделать страницу!!!
     @GetMapping("/userList")
-    public String getUserList(Model model) {
-        model.addAttribute("user", userService.findAll());
-        return "userList";
+    public String getUserList(Model model, Authentication authentication, @ModelAttribute User user) {
+        model.addAttribute("user", userService.findByUsername(authentication.getName()));
+        model.addAttribute("listRoles", Role.values());
+        model.addAttribute("users", userService.findAll());
+        return "manage";
     }
 
     @GetMapping("/edit/{id}")
@@ -58,10 +57,11 @@ public class AdminController {
 
 
     @GetMapping("/add")
-    public String addUserForm(Model model, User user) {
+    public String addUserForm(Model model, User user, Authentication authentication) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", Role.values());
-        return "addUser";
+        model.addAttribute("auth",userService.findByUsername(authentication.getName()));
+        return "addBoot";
     }
 
 
@@ -72,9 +72,9 @@ public class AdminController {
         return "redirect:/admin/userList";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteById(id);
+    @GetMapping("/delete")
+    public String deleteUser(User user) {
+        userService.deleteById(user.getId());
         return "redirect:/admin/userList";
     }
 
