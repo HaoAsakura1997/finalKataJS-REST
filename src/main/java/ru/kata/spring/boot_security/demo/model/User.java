@@ -2,11 +2,13 @@ package ru.kata.spring.boot_security.demo.model;
 
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -24,11 +26,11 @@ public class User implements UserDetails {
     private String email;
 
     //Роли пользователей
-    //Eager потому что количество ролей это практически всегда мало данных,
-    //так что проблем с жадной загрузкой в данной ситуации нет
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="user_role",
+            joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")})
     private Set<Role> roles;
 
     private String surname;
@@ -40,7 +42,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getAuthority())).collect(Collectors.toList());
     }
 
     @Override
@@ -73,7 +75,7 @@ public class User implements UserDetails {
     //для отключения Юзера
     @Override
     public boolean isEnabled() {
-        return isActive();
+        return true;
     }
 
     //Getters and setters
@@ -109,6 +111,10 @@ public class User implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 
     public String getSurname() {

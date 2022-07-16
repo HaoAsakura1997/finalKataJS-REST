@@ -18,6 +18,7 @@
   <nav class="navbar navbar-dark bg-dark">
     <h5 style="color: gainsboro"><b><span th:text=${email}> email </span></b> with roles: <span
             th:each="role : ${user.roles}"
+            th:value="${role.id}"
             th:text="${role.name + ' '}"> roles </span></h5>
 
     <a href="/logout" style="color: darkgray">Logout</a>
@@ -60,7 +61,8 @@
               <td th:utext=${user.getEmail()}>val</td>
               <td th:utext=${user.getPassword()}>val</td>
               <td>
-                <span th:each="role : ${roles.toString()}"
+                <span th:each="role : ${user.roles}"
+                      th:value="${role.id}"
                       th:text="${role + ' '}">role</span>
               </td>
             </tr>

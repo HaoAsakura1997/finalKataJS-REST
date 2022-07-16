@@ -2,11 +2,14 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.configs.WebSecurityConfig;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.persistence.EntityManager;
@@ -14,12 +17,14 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     @PersistenceContext
     private EntityManager em;
 
     private UserRepository userRepository;
+
+    private RoleRepository roleRepository;
 
 //    private PasswordEncoder passwordEncoder;
 //    @Autowired
@@ -30,6 +35,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
 
     public User findByUsername(String username) {
@@ -44,9 +53,7 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException(String.format("User '%s' not found", email));
         }
 
-        return new
-                org.springframework.security.core.userdetails
-                        .User(user.getUsername(), user.getPassword(), user.getRoles());
+        return user;
     }
 
     @Override
@@ -76,5 +83,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public List<Role> listRoles () {
+        return roleRepository.findAll();
     }
 }

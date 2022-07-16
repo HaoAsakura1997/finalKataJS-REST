@@ -16,6 +16,7 @@
     <nav class="navbar navbar-dark bg-dark">
         <h5 style="color: gainsboro"><b><span th:utext=${auth.email}> email </span></b> with roles: <span
                 th:each="role : ${roles}"
+                th:value="${role.id}"
                 th:text="${role.name + ' '}"> roles </span></h5>
 
         <a href="/logout" style="color: darkgray">Logout</a>
@@ -96,8 +97,8 @@
                                                         style= "display: block;
                                                                 align: center;
                                                                 width: 472px">
-                                                    <option value="ADMIN">ADMIN</option>
-                                                    <option selected value="USER">USER</option>
+                                                    <option value=1>ADMIN</option>
+                                                    <option selected value=2>USER</option>
                                                 </select>
                                             </label>
                                     </div>
@@ -130,6 +131,7 @@
                                 <td th:utext=${auth.getEmail()}>val</td>
                                 <td>
                                     <span th:each="role : ${roles}"
+                                          th:value="${role.id}"
                                           th:text="${role.name + ' '}">role</span>
                                 </td>
                             </tr>

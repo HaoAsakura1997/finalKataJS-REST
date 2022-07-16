@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 
@@ -26,6 +27,7 @@ public class AdminController {
         this.userService = userService;
     }
 
+
     @GetMapping
     public String adminPage() {
         return "admin";
@@ -35,7 +37,7 @@ public class AdminController {
     @GetMapping("/userList")
     public String getUserList(Model model, Authentication authentication, @ModelAttribute User user) {
         model.addAttribute("user", userService.findByUsername(authentication.getName()));
-        model.addAttribute("listRoles", Role.values());
+        model.addAttribute("listRoles", userService.listRoles());
         model.addAttribute("users", userService.findAll());
         return "manage";
     }
@@ -44,13 +46,13 @@ public class AdminController {
     public String userEditForm(@PathVariable Long id, Model model) {
         User user = userService.findById(id);
         model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values());
+        model.addAttribute("roles", userService.listRoles());
         return "editUser";
     }
 
     @PostMapping("/edit")
     public String editUser(@ModelAttribute User user, Model model) {
-        model.addAttribute("roles", Role.values());
+        model.addAttribute("roles", userService.listRoles());
         userService.saveUser(user);
         return "redirect:/admin/userList";
     }
@@ -59,7 +61,7 @@ public class AdminController {
     @GetMapping("/add")
     public String addUserForm(Model model, User user, Authentication authentication) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", Role.values());
+        model.addAttribute("roles", userService.listRoles());
         model.addAttribute("auth",userService.findByUsername(authentication.getName()));
         return "addBoot";
     }
