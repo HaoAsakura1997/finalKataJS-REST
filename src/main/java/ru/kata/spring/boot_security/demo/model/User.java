@@ -21,7 +21,6 @@ public class User implements UserDetails {
     // Поля для сприна и аутентификации
     private String username;
     private String password;
-    private boolean active;
 
     private String email;
 
@@ -71,8 +70,6 @@ public class User implements UserDetails {
     }
 
 
-    //Мы сделали булево поле active которое будет отображать данный
-    //для отключения Юзера
     @Override
     public boolean isEnabled() {
         return true;
@@ -97,13 +94,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 
     public Set<Role> getRoles() {
         return roles;

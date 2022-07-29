@@ -37,7 +37,7 @@ public class AdminController {
     @GetMapping("/userList")
     public String getUserList(Model model, Authentication authentication, @ModelAttribute User user) {
         model.addAttribute("user", userService.findByUsername(authentication.getName()));
-        model.addAttribute("listRoles", userService.listRoles());
+        model.addAttribute("amountOfRoles", userService.listRoles());
         model.addAttribute("users", userService.findAll());
         return "manage";
     }
