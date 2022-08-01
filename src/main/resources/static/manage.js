@@ -1,14 +1,16 @@
 console.log('heeeey')
 
-const url = 'http://localhost:8080/api/restadmin/adminpage'
-const update_url = 'http://localhost:8080/api/restadmin/adminpage'
-const delete_url = 'http://localhost:8080/api/restadmin/adminpage'
-const add_url = 'http://localhost:8080/api/restadmin/adminpage'
+
+const url = 'http://localhost:8080/admin/adminpage'
+const update_url = 'http://localhost:8080/admin/adminpage'
+const delete_url = 'http://localhost:8080/admin/adminpage'
+const add_url = 'http://localhost:8080/admin/adminpage'
 
 const addUserForm = document.querySelector('#addUser')
 const editUserForm = document.querySelector('#modalEdit')
 const deleteUserForm = document.querySelector('#modalDelete')
 let currentUserId = null
+let tempPass = ''
 
 function getAllUsers() {
     fetch(url)
@@ -45,7 +47,7 @@ function refreshTable() {
     while (table.rows.length > 1) {
         table.deleteRow(1)
     }
-    setTimeout(getAllUsers, 50);
+    setTimeout(getAllUsers, 500);
 }
 
 //Add User
@@ -80,7 +82,9 @@ addUserForm.addEventListener('submit', (e) => {
             "password": addPassword.value,
             "roles": [
                 {
-                    "id": addRoles.value
+                    "authority": (addRoles.value === 1? "ADMIN" : "USER"),
+                    "id": addRoles.value,
+                    "name":(addRoles.value === 1? "ADMIN" : "USER")
                 }
             ]
         })
@@ -93,7 +97,6 @@ addUserForm.addEventListener('submit', (e) => {
         .then(res => {
             document.getElementById('add_new_user').click()
         })
-    refreshTable()
 });
 
 
@@ -108,7 +111,7 @@ on(document, 'click', '#edit-user', e => {
     document.getElementById('password2').value = userInfo.children[5].innerHTML
     document.getElementById('roles2').value = userInfo.children[6].innerHTML
     $("#modalEdit").modal("show")
-
+    refreshTable()
 })
 
 
@@ -129,7 +132,9 @@ editUserForm.addEventListener('submit', (e) => {
             "password": document.getElementById('password2').value,
             "roles": [
                 {
-                 "id": document.getElementById('roles2').value
+                    "authority": (document.getElementById('roles2').value === 1? "ADMIN" : "USER"),
+                    "id": document.getElementById('roles2').value,
+                    "name":(document.getElementById('roles2').value === 1? "ADMIN" : "USER")
                 }
             ]
         })
